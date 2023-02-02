@@ -10,6 +10,8 @@ class Register:
 
 class RegisterMachineInterpreter:
     registers = {}
+    data = ''
+    reading = 0
 
     def set(self, registers):
         r1, r2 = registers.split(' ')
@@ -44,6 +46,12 @@ class RegisterMachineInterpreter:
         else:
             return label + 1
 
+    def read(self, r):
+        self.registers[r] = Register()
+        data = self.data[self.reading]
+        self.registers[r].set(int(data))
+        self.reading += 1
+
     def execute(self, label, command):
         operator = command[0]
         if operator == '?':
@@ -58,6 +66,8 @@ class RegisterMachineInterpreter:
             return self.neq(label, command[2:])
         if operator == '&':
             self.set(command[2:])
+        if operator == '!':
+            self.read(command[2:])
         if operator == '/':
             self.dump()
         if operator == '%':
@@ -71,7 +81,7 @@ class RegisterMachineInterpreter:
                 _, command = line.split(':')
                 code.append(command.strip())
             else:
-                data = line
+                self.data = line
                 break
         label = 0
         command = code[label]
@@ -79,3 +89,4 @@ class RegisterMachineInterpreter:
             label = self.execute(label, command)
             command = code[label]
         self.registers = {}
+        self.data = ''
