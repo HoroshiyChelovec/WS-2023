@@ -34,14 +34,24 @@ class RegisterMachineInterpreter:
 
     def eq(self, label, command):
         r1, r2, L1 = command.split(' ')
-        if self.registers[r1].value == self.registers[r2].value:
+        r1_value = int(self.registers[r1].value, 2)
+        if r2.isnumeric():
+            r2_value = int(r2)
+        else:
+            r2_value = int(self.registers[r2].value, 2)
+        if r1_value == r2_value:
             return int(L1)
         else:
             return label + 1
 
     def neq(self, label, command):
         r1, r2, L1 = command.split(' ')
-        if self.registers[r1].value != self.registers[r2].value:
+        r1_value = int(self.registers[r1].value, 2)
+        if r2.isnumeric():
+            r2_value = int(r2)
+        else:
+            r2_value = int(self.registers[r2].value, 2)
+        if r1_value != r2_value:
             return int(L1)
         else:
             return label + 1
@@ -51,6 +61,10 @@ class RegisterMachineInterpreter:
         data = self.data[self.reading]
         self.registers[r].set(int(data))
         self.reading += 1
+
+    def right(self, r):
+        value = int(self.registers[r].value, 2) >> 1
+        self.registers[r].set(value)
 
     def execute(self, label, command):
         operator = command[0]
@@ -68,6 +82,8 @@ class RegisterMachineInterpreter:
             self.set(command[2:])
         if operator == '!':
             self.read(command[2:])
+        if operator == ')':
+            self.right(command[2:])
         if operator == '/':
             self.dump()
         if operator == '%':
@@ -90,3 +106,4 @@ class RegisterMachineInterpreter:
             command = code[label]
         self.registers = {}
         self.data = ''
+        self.reading = 0
