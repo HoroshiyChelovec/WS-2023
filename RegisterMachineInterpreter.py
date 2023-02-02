@@ -11,15 +11,26 @@ class RegisterMachineInterpreter:
         for i in range(8):
             self.registers[r1] = str(data % 2) + self.registers[r1]
             data = data >> 1
-        print(self.registers[r1])
 
-    def execute(self, command: str):
+    def dump(self):
+        for key in self.registers:
+            print(f'{key}: {self.registers[key]}')
+
+    def execute(self, label, command):
         operator = command[0]
-        if command[0] == '&':
+        if operator == '?':
+            return int(command[2:])
+        if operator == '&':
             self.set(command[2:])
+        if operator == '/':
+            self.dump()
+        if operator == '%':
+            return -1
+        return label + 1
 
     def interpret(self, code):
-        keep_going = True
-        command = 0
-        while keep_going:
-            self.execute(code[command])
+        label = 0
+        command = code[label]
+        while label >= 0:
+            label = self.execute(label, command)
+            command = code[label]
