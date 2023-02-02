@@ -37,6 +37,13 @@ class RegisterMachineInterpreter:
         else:
             return label + 1
 
+    def neq(self, label, command):
+        r1, r2, L1 = command.split(' ')
+        if self.registers[r1].value != self.registers[r2].value:
+            return int(L1)
+        else:
+            return label + 1
+
     def execute(self, label, command):
         operator = command[0]
         if operator == '?':
@@ -47,6 +54,8 @@ class RegisterMachineInterpreter:
             return int(self.registers[command[2:]].value, 2)
         if operator == '=':
             return self.eq(label, command[2:])
+        if operator == '#':
+            return self.neq(label, command[2:])
         if operator == '&':
             self.set(command[2:])
         if operator == '/':
@@ -55,7 +64,15 @@ class RegisterMachineInterpreter:
             return -1
         return label + 1
 
-    def interpret(self, code):
+    def interpret(self, raw_code):
+        code = []
+        for line in raw_code:
+            if ':' in line:
+                _, command = line.split(':')
+                code.append(command.strip())
+            else:
+                data = line
+                break
         label = 0
         command = code[label]
         while label >= 0:
