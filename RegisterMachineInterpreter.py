@@ -30,6 +30,13 @@ class RegisterMachineInterpreter:
         self.registers[r].set(label + 1)
         return int(L1)
 
+    def eq(self, label, command):
+        r1, r2, L1 = command.split(' ')
+        if self.registers[r1].value == self.registers[r2].value:
+            return int(L1)
+        else:
+            return label + 1
+
     def execute(self, label, command):
         operator = command[0]
         if operator == '?':
@@ -38,6 +45,8 @@ class RegisterMachineInterpreter:
             return self.jump(label, command[2:])
         if operator == '@':
             return int(self.registers[command[2:]].value, 2)
+        if operator == '=':
+            return self.eq(label, command[2:])
         if operator == '&':
             self.set(command[2:])
         if operator == '/':
@@ -52,3 +61,4 @@ class RegisterMachineInterpreter:
         while label >= 0:
             label = self.execute(label, command)
             command = code[label]
+        self.registers = {}
