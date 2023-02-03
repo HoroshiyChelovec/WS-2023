@@ -1,7 +1,6 @@
 import os
 from RegisterMachineInterpreter import RegisterMachineInterpreter, Runtime
 
-
 def create_programs():
     for i in good_programs:
         program, halt = i
@@ -23,9 +22,16 @@ programs.append(('%', True))
 
 interpreter = RegisterMachineInterpreter()
 good_programs = []
+bites = int(input())
 w = 0
 pr = 0
-for q in range(4):
+end = 0
+pr_halt = 0
+pr_not_halt = 0
+for q in range(bites):
+    if q != bites - 1:
+        pr_halt = 0
+        pr_not_halt = 0
     for i in programs:
         program, _ = i
         try:
@@ -33,7 +39,13 @@ for q in range(4):
             interpreter.interpret(program)
             w += 1 / 2 ** (len(program) * 8)
             print(w, pr, program)
+            end += 1
         except Runtime:
+            if q != bites - 1:
+                if '%' in program:
+                    pr_halt += 1
+                else:
+                    pr_not_halt += 1
             good_programs.append((program, '%' in program))
         except:
             pass
@@ -44,3 +56,4 @@ for q in range(4):
     programs = []
     create_programs()
     good_programs = []
+print(f'W:{w}\nПрограмм завершилось:{end}\nПрефиксов с HALT:{pr_halt}\nБез HALT:{pr_not_halt}')
