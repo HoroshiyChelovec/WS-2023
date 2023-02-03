@@ -63,8 +63,22 @@ class RegisterMachineInterpreter:
         self.reading += 1
 
     def right(self, r):
-        value = int(self.registers[r].value, 2) >> 1
-        self.registers[r].set(value)
+        self.registers[r].value = self.registers[r].value[:-1]
+        if len(self.registers[r].value) == 0:
+            self.registers[r].value = '0'
+        # value = int(self.registers[r].value, 2) >> 1
+        # self.registers[r].set(value)
+
+    def left(self, registers):
+        r1, r2 = registers.split()
+        reg = Register()
+        if r2.isnumeric():
+            value = int(r2)
+        else:
+            value = int(self.registers[r2].value, 2)
+        reg.set(value)
+        reg.value.lstrip('0')
+        self.registers[r1].value += reg.value
 
     def execute(self, label, command):
         operator = command[0]
@@ -84,26 +98,23 @@ class RegisterMachineInterpreter:
             self.read(command[2:])
         if operator == ')':
             self.right(command[2:])
+        if operator == '(':
+            self.left(command[2:])
         if operator == '/':
             self.dump()
         if operator == '%':
             return -1
         return label + 1
 
-    def interpret(self, raw_code):
-        code = []
-        for line in raw_code:
-            if ':' in line:
-                _, command = line.split(':')
-                code.append(command.strip())
-            else:
-                self.data = line
-                break
+    def interpret(self, code, data):
+        self.data = data
         label = 0
         command = code[label]
         while label >= 0:
             label = self.execute(label, command)
             command = code[label]
+        if self.reading != len(self.data):
+            a = 1 / 0
         self.registers = {}
         self.data = ''
         self.reading = 0
