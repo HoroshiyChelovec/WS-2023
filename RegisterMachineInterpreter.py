@@ -13,6 +13,27 @@ class RegisterMachineInterpreter:
     data = ''
     reading = 0
 
+    def parse(self, raw_code):
+        code = []
+        operators = ['(', ')', '!', '@', '#', '=', '/', '%', '&', '^', '?']
+        data = ''
+        j = -1
+        is_data = False
+        for i in raw_code:
+            if not is_data:
+                if i in operators:
+                    j += 1
+                    code.append(i + ' ')
+                elif i == ',':
+                    code[j] += ' '
+                else:
+                    code[j] += i
+                if i == '%':
+                    is_data = True
+            else:
+                data += i
+        return code, data
+
     def set(self, registers):
         r1, r2 = registers.split(' ')
         if r2.isnumeric():
@@ -106,8 +127,10 @@ class RegisterMachineInterpreter:
             return -1
         return label + 1
 
-    def interpret(self, code, data):
-        self.data = data
+    def interpret(self, raw_code):
+        if '%' not in raw_code:
+            a = 1 / 0
+        code, self.data = self.parse(raw_code)
         label = 0
         command = code[label]
         while label >= 0:

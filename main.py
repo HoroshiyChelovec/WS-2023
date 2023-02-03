@@ -1,5 +1,6 @@
 import os
 from RegisterMachineInterpreter import RegisterMachineInterpreter
+
 programs_dir = './tests'
 programs = os.listdir(programs_dir)
 
@@ -8,17 +9,9 @@ interpreter = RegisterMachineInterpreter()
 for i in programs:
     print(i)
     with open(f'./tests/{i}', 'r') as program:
-        code = []
-        data = ''
-        for line in program:
-            if ':' in line:
-                _, command = line.split(':')
-                code.append(command.strip())
-            else:
-                data = line
-                break
+        code = program.read()
         try:
-            interpreter.interpret(code, data)
+            interpreter.interpret(code)
         except:
             print('Runtime Error')
             interpreter.data = ''
