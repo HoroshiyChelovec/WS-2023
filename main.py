@@ -66,13 +66,13 @@ x = len(good_programs1)
 while x > 0:
     good_programs.append(good_programs1.pop())
     x -= 1
-print(f'W:{binary_float(w, 64)}({w})\nПрограмм завершилось:{end}\nПрефиксов с HALT:{pref_halt}\nБез HALT:{pref_not_halt}\n----------')
+print(f'W:{binary_float(w, 54)}({w})\nПрограмм завершилось:{end}\nПрефиксов с HALT:{pref_halt}\nБез HALT:{pref_not_halt}\n----------')
 for q in range(1, bites):
     if q != bites - 1:
         pref_halt = 0
         pref_not_halt = 0
     create_programs()
-    print(f'W:{binary_float(w, 64)}({w})\nПрограмм завершилось:{end}\nПрефиксов с HALT:{pref_halt}\nБез HALT:{pref_not_halt}\n----------')
+    print(f'W:{binary_float(w, 54)}({w})\nПрограмм завершилось:{end}\nПрефиксов с HALT:{pref_halt}\nБез HALT:{pref_not_halt}\n----------')
     x = len(good_programs1)
     while x > 0:
         good_programs.append(good_programs1.pop())
